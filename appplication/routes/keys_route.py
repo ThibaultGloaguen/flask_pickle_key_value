@@ -1,6 +1,8 @@
 from flask import jsonify, request, abort, make_response, Blueprint
-from appplication.service.key_store_service import KeyStoreService
-from appplication import error_counter
+
+from appplication.metrics.metrics_handler import INTERNAL_ERROR_COUNT
+from appplication.services.key_store_service import KeyStoreService
+import sys
 
 store_service = KeyStoreService()
 
@@ -30,7 +32,7 @@ def put():
     json_payload = request.json
     if not json_payload:
         abort(400)
-    keys_not_persisted = store_service.set_entity(json_payload, expire_in)
+    keys_not_persisted = store_service.set_entities(json_payload, expire_in)
     message = 'all key value pair are persisted'
     if len(keys_not_persisted) > 0:
         message = 'keys %s were not persisted in database' % ', '.join(keys_not_persisted)
@@ -59,24 +61,29 @@ def delete_all():
 
 @views.errorhandler(404)
 def not_found(error):
-    error_counter.labels(error_code='404', description='Entity not found').inc()
+    sys.stderr.write("Request path: %s Request method: %s with error %s\n" %
+                     (request.path, request.method, str(error)))
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
 @views.errorhandler(400)
 def bad_request(error):
-    error_counter.labels(error_code='400', description='Bad request').inc()
+    sys.stderr.write("Request path: %s Request method: %s with error %s\n" %
+                     (request.path, request.method, str(error)))
     return make_response(jsonify({'error': 'Bad request'}), 400)
 
 
 @views.errorhandler(410)
 def expired(error):
-    error_counter.labels(error_code='410', description='Entity expired').inc()
+    sys.stderr.write("Request path: %s Request method: %s with error %s\n" %
+                     (request.path, request.method, str(error)))
     return make_response(jsonify({'error': 'Expired'}), 410)
 
 
 @views.errorhandler(500)
 def server_error(error):
-    print error.message
-    error_counter.labels(error_code='500', description='Internal error').inc()
+    sys.stderr.write("Request path: %s Request method: %s with error %s\n" %
+                     (request.path, request.method, str(error)))
+    INTERNAL_ERROR_COUNT.labels('key_value_app', request.method, request.path,
+                                str(error)).inc()
     return make_response(jsonify({'error': 'Internal error :('}), 500)

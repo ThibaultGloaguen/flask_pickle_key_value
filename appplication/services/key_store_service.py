@@ -1,7 +1,7 @@
 import fnmatch
 
-from appplication.model.key_store_model import KeyStoreModel
-from appplication.service.database_service import DatabaseService
+from appplication.models.key_store_model import KeyStoreModel
+from appplication.services.database_service import DatabaseService
 from dateutil import parser
 from datetime import datetime
 
@@ -53,16 +53,15 @@ class KeyStoreService(DatabaseService):
             all_keys = fnmatch.filter(all_keys, filter.replace('$', '*'))
         return all_keys
 
-    def set_entity(self, json_payload, expire_in):
+    def set_entities(self, json_payload, expire_in):
         keys_not_persisted = []
         if expire_in:
             expire_in = int(expire_in)
         for key, value in json_payload.iteritems():
-            is_persisted = self.set(str(key), KeyStoreModel(value,
+            success = self.set(str(key), KeyStoreModel(value,
                                                             date_creation=datetime.now(),
                                                             time_to_live=expire_in).to_dict())
-            if not is_persisted:
-                # LOG avec prometheus
+            if not success:
                 keys_not_persisted.append(key)
                 continue
         return keys_not_persisted

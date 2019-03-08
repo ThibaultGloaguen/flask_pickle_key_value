@@ -1,9 +1,10 @@
 import unittest
 from datetime import datetime
-from appplication.service.key_store_service import KeyStoreService
+from appplication.services.key_store_service import KeyStoreService
 
 
 class TestKeyStoreService(unittest.TestCase):
+
     def test_get_entity_fields_nominal_case(self):
         entity_from_db = {
             'date_creation': '2019-03-06 22:44:32',
@@ -21,7 +22,7 @@ class TestKeyStoreService(unittest.TestCase):
             'time_to_live': '10'
         }
         try:
-            date_creation, time_to_live, value = KeyStoreService.get_entity_fields(entity_from_db)
+            KeyStoreService.get_entity_fields(entity_from_db)
             self.fail('shall fail')
         except Exception as e:
             self.assertEqual(e.message, 'Corrupted data: missing value from entity in DB')
@@ -31,7 +32,7 @@ class TestKeyStoreService(unittest.TestCase):
             'time_to_live': '10'
         }
         try:
-            date_creation, time_to_live, value = KeyStoreService.get_entity_fields(entity_from_db)
+            KeyStoreService.get_entity_fields(entity_from_db)
             self.fail('shall fail')
         except Exception as e:
             self.assertEqual(e.message, 'Corrupted data: missing value, date_creation from entity in DB')

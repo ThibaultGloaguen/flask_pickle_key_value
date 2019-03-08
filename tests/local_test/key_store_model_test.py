@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 import time
-from appplication.model.key_store_model import KeyStoreModel
+from appplication.models.key_store_model import KeyStoreModel
 
 
 class TestKeyStoreModel(unittest.TestCase):

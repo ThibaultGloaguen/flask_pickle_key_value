@@ -1,16 +1,16 @@
 from flask import Flask
 import os
 import pickledb
-from prometheus_client import Counter
+from metrics.metrics_handler import setup_metrics
 
 app = Flask(__name__)
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'key_value_store.db')
 ))
+setup_metrics(app)
+
 db = pickledb.load(app.config['DATABASE'], True)
 
-error_counter = Counter('my_requests_total', 'HTTP Failures', ['error_code', 'description'])
+from appplication.routes import keys_route
 
-from appplication.routes import keys
-
-app.register_blueprint(keys.views)
+app.register_blueprint(keys_route.views)

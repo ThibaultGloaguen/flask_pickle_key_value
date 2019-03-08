@@ -6,6 +6,8 @@ from appplication import app
 class TestRoute(unittest.TestCase):
     app.config['DATABASE'] = 'key_value_store_for_test_only.db'
     client = app.test_client()
+    # DROP DB before executing integration tests
+    client.delete('/keys')
 
     def test_get_all_values_empty_db(self):
         rv = self.client.get('/keys')
