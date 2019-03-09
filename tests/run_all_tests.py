@@ -6,6 +6,7 @@ from tests.local_test.key_store_service_test import TestKeyStoreService
 from tests.integration_test.route_test import TestRoute
 
 if __name__ == '__main__':
+
     model = unittest.TestLoader().loadTestsFromTestCase(TestKeyStoreModel)
     service = unittest.TestLoader().loadTestsFromTestCase(TestKeyStoreService)
     integration = unittest.TestLoader().loadTestsFromTestCase(TestRoute)

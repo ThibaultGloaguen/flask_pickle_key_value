@@ -1,4 +1,5 @@
 import fnmatch
+import sys
 
 from appplication.models.key_store_model import KeyStoreModel
 from appplication.services.database_service import DatabaseService
@@ -59,9 +60,12 @@ class KeyStoreService(DatabaseService):
             expire_in = int(expire_in)
         for key, value in json_payload.iteritems():
             success = self.set(str(key), KeyStoreModel(value,
-                                                            date_creation=datetime.now(),
-                                                            time_to_live=expire_in).to_dict())
-            if not success:
+                                                       date_creation=datetime.now(),
+                                                       time_to_live=expire_in).to_dict())
+            if success:
+                sys.stdout.write(" key/value  %s - %s inserted in DB\n" % (key, value))
+            else:
+                sys.stdout.write(" key/value  %s - %s was not inserted in DB\n" % (key, value))
                 keys_not_persisted.append(key)
-                continue
+
         return keys_not_persisted

@@ -1,6 +1,10 @@
 version: '3'
 services:
-  web:
+  test:
     build: .
+    command: python ./tests/run_all_tests.py
+  application:
+    build: .
+    command: uwsgi --http 0.0.0.0:8000 --wsgi-file run.py --callable app_dispatch
     ports:
     - "8000:8000"

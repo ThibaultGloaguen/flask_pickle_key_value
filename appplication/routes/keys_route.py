@@ -33,7 +33,7 @@ def put():
     if not json_payload:
         abort(400)
     keys_not_persisted = store_service.set_entities(json_payload, expire_in)
-    message = 'all key value pair are persisted'
+    message = 'all key/value pair have been saved'
     if len(keys_not_persisted) > 0:
         message = 'keys %s were not persisted in database' % ', '.join(keys_not_persisted)
     return jsonify({'response': message})
@@ -45,6 +45,7 @@ def delete(id):
         abort(404)
     is_deleted = store_service.delete(id)
     message = '%s has been deleted' % id
+    sys.stdout.write(message)
     if not is_deleted:
         message = 'impossible to delete %s' % id
     return jsonify({'response': message})
@@ -54,6 +55,7 @@ def delete(id):
 def delete_all():
     is_all_key_deleted = store_service.delete_all()
     message = 'all keys have been deleted'
+    sys.stdout.write(message)
     if not is_all_key_deleted:
         message = 'impossible to delete all keys'
     return jsonify({'response': message})

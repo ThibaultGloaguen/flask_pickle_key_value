@@ -6,12 +6,15 @@ It allow you to store, get and delete key value objects throught an http API.
 
 | Method | Path | README |
 | ------ | ------ | ------ |
-| GET | /key/{id} | get a value  |
+| GET | /keys/{id} | get a value  |
 | GET | /keys | get all values ( optional parameter: filter, support wildcards. Example: filter=wo$d gives you => world, wod, word, etc .. ) |
-| HEAD | /key/{id} | check if value exists |
-| DELETE | /key/{id} | delete value |
+| HEAD | /keys/{id} | check if value exists |
+| DELETE | /keys/{id} | delete value |
 | PUT | /keys | set a value ( optional parameter: expire_in, set an expiracy time `in seconds` when adding a value) |
 | DELETE | /keys | delete all values |
+
+The client should send data in json format with the following header : `Content-Type: application/json`
+
 
 # Installation
 
@@ -19,7 +22,12 @@ This application requires Docker to run.
 By default, the Docker will expose port 8000. To change this configuration, you can modify the docker-compose.yml to choose another port.
 To install and run the server application:
 ```sh
-$ docker-compose build && docker-compose up
+$ docker-compose build
+```
+
+# Run
+```sh
+$ docker-compose up application
 ```
 The server should now run on http://0.0.0.0:8000
 
@@ -28,8 +36,7 @@ The server should now run on http://0.0.0.0:8000
 This solution is provided with local tests and integration tests.
 To run those tests:
 ```sh
-$ cd key_value_store
-$ python ./test/run_all_tests.py
+$ docker-compose up test
 ```
 
 ### Architecture
@@ -75,13 +82,13 @@ It is possible to check for :
 
 ### Remarks
 
-Concerning the PUT method on request path /keys, there are multipe points to discuss.
+Concerning the PUT method on request path /keys, there are multiple points to discuss.
 * The challenge documentation didn't mentioned about saving multiples values with this endpoint.
 But if the client send more than one key/value in the json payload on this endpoint, I decided to insert them all in DB in one API call.
 * If the client decides to PUT one key/value pair but  the same key is already stored in DB.
 I had two choices here: 1. Throw an exception to inform the client that this key is already present in the database and not save it. 2. Erase the old value associated to the key in database with the new one sended by the client
 
-I choose solution 2, but both are possible in this inplementation.
+I choose solution 2, but both are possible in this implementation.
 
 #### Limitations
 
@@ -98,3 +105,5 @@ To deals with the large amount of data problem, some optimizations can be done s
 The solution could also provides a endpoint to update a value in DB. To follow the REST standart it could be the endpoint /key/{id} with the method PATCH.
 
 
+
+Thanks for reading ;)
