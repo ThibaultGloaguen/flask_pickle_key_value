@@ -80,16 +80,6 @@ It is possible to check for :
 - the number total of internals errors and the error label for every errors with the name `internal_error_count`
 
 
-### Remarks
-
-Concerning the PUT method on request path /keys, there are multiple points to discuss.
-* The challenge documentation didn't mentioned about saving multiples values with this endpoint.
-But if the client send more than one key/value in the json payload on this endpoint, I decided to insert them all in DB in one API call.
-* If the client decides to PUT one key/value pair but  the same key is already stored in DB.
-I had two choices here: 1. Throw an exception to inform the client that this key is already present in the database and not save it. 2. Erase the old value associated to the key in database with the new one sended by the client
-
-I choose solution 2, but both are possible in this implementation.
-
 #### Limitations
 
 If this solution has to deal with a large amount of data, some problems could happens such as:
